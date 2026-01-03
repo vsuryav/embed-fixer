@@ -22,8 +22,8 @@ def embed(message: str):
         aliased = message.replace("twitter.com", "vxtwitter.com")
     elif "x.com" in message and "vxtwitter" not in message and "status" in message:
         aliased = message.replace("x.com", "vxtwitter.com")
-    elif "instagram.com" in message and "instagramez.com" not in message and ("reels" in message or "reel" in message):
-        aliased = message.replace("instagram.com", "instagramez.com")
+    elif "instagram.com" in message and "kkinstagram.com" not in message and ("reels" in message or "reel" in message):
+        aliased = message.replace("instagram.com", "kkinstagram.com")
     return aliased
 
 @bot.event
@@ -60,18 +60,9 @@ async def on_message(message):
     aliased = embed(message.content)
 
     if aliased:
-        # Handle the scenario for SFPJs
-        # Check if the channel is not brainrot
-        if message.guild.name == "Squad Footie Pajamas" and message.channel.name != "brainrot":
-            target_channel = discord.utils.get(message.guild.channels, name="brainrot")
-            if target_channel:
-                await target_channel.send(f"{message.author.display_name} shared: {aliased}")
-                await message.delete()
-                logger.info(f"Redirected embed from {message.author.display_name} to #brainrot")
-        else:
-            await message.channel.send(f"{message.author.display_name} shared: {aliased}")
-            await message.delete()
-            logger.info(f"Posted embed for {message.author.display_name} and deleted original")
+        await message.channel.send(f"{message.author.display_name} shared: {aliased}")
+        await message.delete()
+        logger.info(f"Posted embed for {message.author.display_name} in #{message.channel.name}")
         
         with open("embed.log", "a") as file:
             now = time.time()

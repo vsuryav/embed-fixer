@@ -6,12 +6,12 @@ Restart=always
 
 [Service]
 Type=simple
-User=sun
-Group=sun
-WorkingDirectory=/home/sun/embed-fixer
-Environment=PATH=/home/sun/.local/bin:/usr/local/bin:/usr/bin:/bin
-EnvironmentFile=/home/sun/embed-fixer/.env
-ExecStart=/home/sun/.local/bin/uv run main.py
+User=admin
+Group=admin
+WorkingDirectory=/home/admin/embed-fixer
+Environment=PATH=/home/admin/.local/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=/home/admin/embed-fixer/.env
+ExecStart=/home/admin/.local/bin/uv run main.py
 Restart=always
 RestartSec=10
 StandardOutput=journal
@@ -22,8 +22,9 @@ SyslogIdentifier=embed-fixer
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
-ProtectHome=read-only
-ReadWritePaths=/home/sun/embed-fixer
+ReadWritePaths=/home/admin/embed-fixer
+ReadWritePaths=/home/admin/.cache
 
 [Install]
 WantedBy=multi-user.target
+
