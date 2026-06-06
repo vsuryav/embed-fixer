@@ -1,4 +1,5 @@
 import discord
+import datetime
 from discord.ext import commands
 from llm import summarize_messages
 
@@ -7,7 +8,7 @@ class SummarizeCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name="carl", description="Summarize a user's last 10 messages in this channel.")
+    @discord.slash_command(name="carl", description="Summarize a user's messages from the last 5 minutes in this channel.")
     async def carl(self, ctx: discord.ApplicationContext, user: discord.Member):
         # Check for "boys" role
         role_names = [role.name for role in ctx.author.roles]
@@ -18,9 +19,12 @@ class SummarizeCommands(commands.Cog):
         # Defer ephemerally to avoid Discord timeout
         await ctx.defer(ephemeral=True)
 
-        # Fetch last 10 messages from this user in this channel
+        # Calculate cutoff time — 5 minutes ago
+        cutoff = discord.utils.utcnow() - datetime.timedelta(minutes=5)
+
+        # Fetch messages from the last 5 minutes from this user
         collected = []
-        async for msg in ctx.channel.history(limit=200):
+        async for msg in ctx.channel.history(limit=200, after=cutoff):
             if msg.author.id != user.id:
                 continue
             if msg.author.bot:
@@ -28,11 +32,9 @@ class SummarizeCommands(commands.Cog):
             if not msg.content.strip():
                 continue
             collected.append(msg.content.strip())
-            if len(collected) >= 10:
-                break
 
         if not collected:
-            await ctx.followup.send("No messages found for that user in this channel.", ephemeral=True)
+            await ctx.followup.send("No messages found from that user in the last 5 minutes.", ephemeral=True)
             return
 
         summary = await summarize_messages(user.display_name, collected)
