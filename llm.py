@@ -1,4 +1,5 @@
 import os
+import asyncio
 import google.generativeai as genai
 
 
@@ -23,13 +24,18 @@ async def summarize_messages(username: str, messages: list[str]) -> str:
             f"Format your response as bullet points only. No introduction or conclusion."
         )
 
-        response = model.generate_content(prompt)
+        response = await asyncio.wait_for(
+            asyncio.to_thread(model.generate_content, prompt),
+            timeout=30.0
+        )
 
         if response and response.text:
             return response.text.strip()
 
         return "Could not generate a summary. Please try again."
 
+    except asyncio.TimeoutError:
+        return "Error: Gemini API request timed out after 30 seconds."
     except Exception as e:
         error_msg = str(e).lower()
         if "api_key" in error_msg or "invalid" in error_msg:
