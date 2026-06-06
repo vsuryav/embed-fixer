@@ -7,8 +7,8 @@ class SummarizeCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.slash_command(name="summarize", description="Summarize a user's last 10 messages in this channel.")
-    async def summarize(self, ctx: discord.ApplicationContext, user: discord.Member):
+    @discord.slash_command(name="carl", description="Summarize a user's last 10 messages in this channel.")
+    async def carl(self, ctx: discord.ApplicationContext, user: discord.Member):
         # Check for "boys" role
         role_names = [role.name for role in ctx.author.roles]
         if "boys" not in role_names:
