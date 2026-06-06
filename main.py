@@ -1,7 +1,11 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 import discord
 import os
 import time
 import logging
+from commands import SummarizeCommands
 
 # Set up logging
 logging.basicConfig(
@@ -12,7 +16,7 @@ logger = logging.getLogger("embed-fixer")
 
 intents = discord.Intents.default()
 intents.messages = True
-intents.message_content = True  
+intents.message_content = True
 
 bot = discord.Bot(intents=intents)
 
@@ -33,15 +37,12 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    # Ignore all bot messages (including our own)
     if message.author.bot:
         return
-    
-    # Additional safety: ignore messages that match our posting pattern
+
     if " shared: " in message.content:
         return
 
-    # Check if the message is from RSC
     if message.guild and message.guild.name == "Rush Site C":
         if "x.com" in message.content or "twitter.com" in message.content:
             try:
@@ -63,16 +64,17 @@ async def on_message(message):
         await message.channel.send(f"{message.author.display_name} shared: {aliased}")
         await message.delete()
         logger.info(f"Posted embed for {message.author.display_name} in #{message.channel.name}")
-        
+
         with open("embed.log", "a") as file:
             now = time.time()
             file.write(f"{now}-{message.author.name}-{message.content}\n")
 
-discord_key = os.environ.get("discord")
+DISCORD = os.environ.get("discord")
 
-if discord_key is None:
-    logger.error("Discord environment variable is not set")
+if not DISCORD:
+    logger.error("discord environment variable is not set")
     raise ValueError("discord environment variable is not set")
 
 logger.info("Starting embed-fixer bot...")
-bot.run(discord_key)
+bot.add_cog(SummarizeCommands(bot))
+bot.run(DISCORD)
