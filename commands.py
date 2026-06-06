@@ -10,12 +10,6 @@ class SummarizeCommands(commands.Cog):
 
     @discord.slash_command(name="carl", description="Summarize a user's messages from the last 5 minutes in this channel.")
     async def carl(self, ctx: discord.ApplicationContext, user: discord.Member):
-        # Check for "boys" role
-        role_names = [role.name for role in ctx.author.roles]
-        if "boys" not in role_names:
-            await ctx.respond("You don't have permission to use this command.", ephemeral=True)
-            return
-
         # Defer ephemerally to avoid Discord timeout
         await ctx.defer(ephemeral=True)
 
