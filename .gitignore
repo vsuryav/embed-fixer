@@ -4,3 +4,4 @@ embed-fixer/
 .venv/
 embed.log
 nohup.out
+.env
